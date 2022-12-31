@@ -224,6 +224,7 @@ namespace Banking_Application
         public bool closeBankAccount(String accNo)
         {
 
+            accounts.Add(findBankAccountByAccNo(accNo));
             Bank_Account toRemove = null;
 
             foreach (Bank_Account ba in accounts)
@@ -260,6 +261,7 @@ namespace Banking_Application
         public bool lodge(String accNo, double amountToLodge)
         {
 
+            accounts.Add(findBankAccountByAccNo(accNo));
             Bank_Account toLodgeTo = null;
 
             foreach (Bank_Account ba in accounts)
@@ -295,6 +297,7 @@ namespace Banking_Application
 
         public bool withdraw(String accNo, double amountToWithdraw)
         {
+            accounts.Add(findBankAccountByAccNo(accNo));
 
             Bank_Account toWithdrawFrom = null;
             bool result = false;
