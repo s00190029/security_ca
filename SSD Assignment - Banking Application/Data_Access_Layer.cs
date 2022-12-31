@@ -174,21 +174,52 @@ namespace Banking_Application
         }
 
 
-        public Bank_Account findBankAccountByAccNo(String accNo) // change this to execute SQL rather than read everything from a DB?
+        public Bank_Account findBankAccountByAccNo(String accNo)
         {
-
-            foreach (Bank_Account ba in accounts)
+            using (var connection = getDatabaseConnection())
             {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT * FROM Bank_Accounts WHERE accountNo = @accNo";
+                command.Parameters.AddWithValue("@accNo", accNo);
 
-                if (ba.accountNo.Equals(accNo))
+                SqliteDataReader dr = command.ExecuteReader();
+
+                while (dr.Read())
                 {
-                    return ba;
+                    int accountType = dr.GetInt16(7);
+                    if (accountType == Account_Type.Current_Account)
+                    {
+                        Current_Account ca = new Current_Account();
+                        ca.accountNo = dr.GetString(0);
+                        ca.name = dr.GetString(1);
+                        ca.address_line_1 = dr.GetString(2);
+                        ca.address_line_2 = dr.GetString(3);
+                        ca.address_line_3 = dr.GetString(4);
+                        ca.town = dr.GetString(5);
+                        ca.balance = dr.GetDouble(6);
+                        ca.overdraftAmount = dr.GetDouble(8);
+                        return ca;
+                    }
+                    else
+                    {
+                        Savings_Account sa = new Savings_Account();
+                        sa.accountNo = dr.GetString(0);
+                        sa.name = dr.GetString(1);
+                        sa.address_line_1 = dr.GetString(2);
+                        sa.address_line_2 = dr.GetString(3);
+                        sa.address_line_3 = dr.GetString(4);
+                        sa.town = dr.GetString(5);
+                        sa.balance = dr.GetDouble(6);
+                        sa.interestRate = dr.GetDouble(9);
+                        return sa;
+                    }
                 }
-
             }
 
             return null;
         }
+
 
         public bool closeBankAccount(String accNo)
         {
