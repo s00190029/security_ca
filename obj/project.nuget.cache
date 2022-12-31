@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "eFfUZe3aSOy3SboEokMdo+ME3YOSGRXy/a/VBO4L4leYQDR7hGFAhtixCq97xCTUh1FUS/3VvyAKhmLVeAitZA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\S00190029\\security_ca\\mine\\SSD Assignment - Banking Application\\SSD Assignment - Banking Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\S00190029\\.nuget\\packages\\microsoft.data.sqlite\\7.0.0\\microsoft.data.sqlite.7.0.0.nupkg.sha512",
+    "C:\\Users\\S00190029\\.nuget\\packages\\microsoft.data.sqlite.core\\7.0.0\\microsoft.data.sqlite.core.7.0.0.nupkg.sha512",
+    "C:\\Users\\S00190029\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.2\\sqlitepclraw.bundle_e_sqlite3.2.1.2.nupkg.sha512",
+    "C:\\Users\\S00190029\\.nuget\\packages\\sqlitepclraw.core\\2.1.2\\sqlitepclraw.core.2.1.2.nupkg.sha512",
+    "C:\\Users\\S00190029\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.2\\sqlitepclraw.lib.e_sqlite3.2.1.2.nupkg.sha512",
+    "C:\\Users\\S00190029\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.2\\sqlitepclraw.provider.e_sqlite3.2.1.2.nupkg.sha512",
+    "C:\\Users\\S00190029\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
+  ],
+  "logs": []
+}
