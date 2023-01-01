@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SSD_Assignment___Banking_Application;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,9 +9,8 @@ namespace Banking_Application
     {
         public static void Main(string[] args)
         {
-            
             Data_Access_Layer dal = Data_Access_Layer.getInstance();
-            //dal.loadBankAccounts();
+           // dal.loadBankAccounts(); // Do not call this insecure method
             bool running = true;
 
             do
@@ -260,6 +260,7 @@ namespace Banking_Application
                         }
                         else
                         {
+
                             double amountToLodge = -1;
                             loopCount = 0;
 

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+using System.Data.SqlClient;
+using SSD_Assignment___Banking_Application;
+using System.Data;
 
 namespace Banking_Application
 {
@@ -12,7 +15,8 @@ namespace Banking_Application
     {
 
         private List<Bank_Account> accounts;
-        private static String databaseName = "Banking Database.db"; // made private as it's not used anywhere else.
+        public static String databaseName = "Banking Database.db";
+        //private static String databaseName = "Banking Database.db"; // made private as it's not used anywhere else.
         private static Data_Access_Layer instance = new Data_Access_Layer();
 
         private Data_Access_Layer()//Singleton Design Pattern (For Concurrency Control) - Use getInstance() Method Instead.
@@ -25,7 +29,7 @@ namespace Banking_Application
             return instance;
         }
 
-        private SqliteConnection getDatabaseConnection()
+        public SqliteConnection getDatabaseConnection()
         {
 
             String databaseConnectionString = new SqliteConnectionStringBuilder()
@@ -164,7 +168,7 @@ namespace Banking_Application
                     command.Parameters.AddWithValue("@overdraftAmount", DBNull.Value);
                     command.Parameters.AddWithValue("@interestRate", sa.interestRate);
                 }
-
+                command.Prepare();
                 command.ExecuteNonQuery();
 
             }
@@ -249,6 +253,7 @@ namespace Banking_Application
                     connection.Open();
                     var command = connection.CreateCommand();
                     command.CommandText = "DELETE FROM Bank_Accounts WHERE accountNo = '" + toRemove.accountNo + "'";
+                    command.Prepare();
                     command.ExecuteNonQuery();
 
                 }
@@ -280,7 +285,6 @@ namespace Banking_Application
                 return false;
             else
             {
-
                 using (var connection = getDatabaseConnection())
                 {
                     connection.Open();
@@ -288,8 +292,17 @@ namespace Banking_Application
                     command.CommandText = "UPDATE Bank_Accounts SET balance = " + toLodgeTo.balance + " WHERE accountNo = '" + toLodgeTo.accountNo + "'";
                     command.ExecuteNonQuery();
 
+                
+                    SqliteParameter idParam = new SqliteParameter("@newbal", SqliteType.Integer, 0);
+                    SqliteParameter descParam =
+                        new SqliteParameter("@desc", SqliteType.Text, 100);
+                    idParam.Value = toLodgeTo.balance;
+                    descParam.Value = toLodgeTo.accountNo;
+                    command.Parameters.Add(idParam);
+                    command.Parameters.Add(descParam);
+                    command.Prepare();
+                    command.ExecuteNonQuery();
                 }
-
                 return true;
             }
 
@@ -319,13 +332,27 @@ namespace Banking_Application
             else
             {
 
-                using (var connection = getDatabaseConnection())
+                using (SqlConnection connection = new SqlConnection(Data_Access_Layer.databaseName))
                 {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText = "UPDATE Bank_Accounts SET balance = " + toWithdrawFrom.balance + " WHERE accountNo = '" + toWithdrawFrom.accountNo + "'";
-                    command.ExecuteNonQuery();
+                    var newbal = encryption.Decrypt(toWithdrawFrom.balance.ToString());
 
+                    SqlCommand command = new SqlCommand(null, connection)
+                    {
+
+                        // Create and prepare an SQL statement.
+                        CommandText =
+                        "UPDATE Bank_Accounts SET balance =(bal) WHERE account = @accountNo" +
+                        "VALUES (@newbal, @accno)"
+                    };
+                    SqlParameter idParam = new SqlParameter("@newbal", SqlDbType.Int, 0);
+                    SqlParameter descParam =
+                        new SqlParameter("@desc", SqlDbType.Text, 100);
+                    idParam.Value = newbal;
+                    descParam.Value = toWithdrawFrom.accountNo;
+                    command.Parameters.Add(idParam);
+                    command.Parameters.Add(descParam);
+                    command.Prepare();
+                    command.ExecuteNonQuery();
                 }
 
                 return true;

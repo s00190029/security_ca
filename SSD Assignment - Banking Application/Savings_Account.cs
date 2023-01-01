@@ -11,12 +11,12 @@ namespace Banking_Application
 
         public double interestRate;
 
-       public Savings_Account(): base()
+       internal Savings_Account(): base() //internalised
         {
 
         }
         
-        public Savings_Account(String name, String address_line_1, String address_line_2, String address_line_3, String town, double balance, double interestRate) : base(name, address_line_1, address_line_2, address_line_3, town, balance)
+        internal Savings_Account(String name, String address_line_1, String address_line_2, String address_line_3, String town, double balance, double interestRate) : base(name, address_line_1, address_line_2, address_line_3, town, balance)
         {
             this.interestRate = interestRate;
         }
