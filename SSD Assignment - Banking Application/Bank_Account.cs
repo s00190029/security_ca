@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SSD_Assignment___Banking_Application;
 
 namespace Banking_Application
 {
@@ -24,7 +25,9 @@ namespace Banking_Application
         
         public Bank_Account(String name, String address_line_1, String address_line_2, String address_line_3, String town, double balance)
         {
-            this.accountNo = System.Guid.NewGuid().ToString();
+            var test = encryption.Encrypt(System.Guid.NewGuid().ToString());
+            //this.accountNo = System.Guid.NewGuid().ToString();
+            this.accountNo = test;
             this.name = name;
             this.address_line_1 = address_line_1;
             this.address_line_2 = address_line_2;
@@ -47,7 +50,7 @@ namespace Banking_Application
         public override String ToString()
         {
 
-            return "\nAccount No: " + accountNo + "\n" +
+            return "\nAccount No: " + encryption.Decrypt(accountNo) + "\n" +
             "Name: " + name + "\n" +
             "Address Line 1: " + address_line_1 + "\n" +
             "Address Line 2: " + address_line_2 + "\n" +
@@ -56,6 +59,19 @@ namespace Banking_Application
             "Balance: " + balance + "\n";
 
     }
+
+        public String ToString2()
+        {
+
+            return "\nAccount No: " + accountNo + "\n" +
+            "Name: " + name + "\n" +
+            "Address Line 1: " + address_line_1 + "\n" +
+            "Address Line 2: " + address_line_2 + "\n" +
+            "Address Line 3: " + address_line_3 + "\n" +
+            "Town: " + town + "\n" +
+            "Balance: " + balance + "\n";
+
+        }
 
     }
 }

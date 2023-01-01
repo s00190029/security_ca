@@ -1,7 +1,10 @@
 ﻿using SSD_Assignment___Banking_Application;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Banking_Application
 {
@@ -9,8 +12,13 @@ namespace Banking_Application
     {
         public static void Main(string[] args)
         {
+
+            /*EventLog eventLog = new EventLog();
+            eventLog.Source = "MyEventLogTarget";
+            eventLog.WriteEntry("This is a test message.", EventLogEntryType.Information);
+            */
             Data_Access_Layer dal = Data_Access_Layer.getInstance();
-           // dal.loadBankAccounts(); // Do not call this insecure method
+            // dal.loadBankAccounts(); // Do not call this insecure method
             bool running = true;
 
             do
@@ -26,17 +34,17 @@ namespace Banking_Application
                 Console.WriteLine("6. Exit");
                 Console.WriteLine("CHOOSE OPTION:");
                 String option = Console.ReadLine();
-                
-                switch(option)
+
+                switch (option)
                 {
                     case "1":
                         String accountType = "";
                         int loopCount = 0;
-                        
+
                         do
                         {
 
-                           if(loopCount > 0)
+                            if (loopCount > 0)
                                 Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
 
                             Console.WriteLine("");
@@ -84,7 +92,7 @@ namespace Banking_Application
 
                         Console.WriteLine("Enter Address Line 2: ");
                         String addressLine2 = Console.ReadLine();
-                        
+
                         Console.WriteLine("Enter Address Line 3: ");
                         String addressLine3 = Console.ReadLine();
 
@@ -121,7 +129,7 @@ namespace Banking_Application
                                 balance = Convert.ToDouble(balanceString);
                             }
 
-                            catch 
+                            catch
                             {
                                 loopCount++;
                             }
@@ -191,12 +199,18 @@ namespace Banking_Application
 
                         String accNo = dal.addBankAccount(ba);
 
-                        Console.WriteLine("New Account Number Is: " + accNo);
+                        Console.WriteLine("New Account Number Is: " + encryption.Decrypt(ba.accountNo));
 
                         break;
                     case "2":
                         Console.WriteLine("Enter Account Number: ");
                         accNo = Console.ReadLine();
+                        if (accNo.Length > 37)
+                        {
+                            Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
+                            break;
+                        }
+                        accNo = encryption.Encrypt(accNo);
 
                         ba = dal.findBankAccountByAccNo(accNo);
 
@@ -213,7 +227,7 @@ namespace Banking_Application
                             do
                             {
 
-                                Console.WriteLine("Proceed With Delection (Y/N)?"); 
+                                Console.WriteLine("Proceed With Delection (Y/N)?");
                                 ans = Console.ReadLine();
 
                                 switch (ans)
@@ -235,22 +249,47 @@ namespace Banking_Application
                     case "3":
                         Console.WriteLine("Enter Account Number: ");
                         accNo = Console.ReadLine();
-
-                        ba = dal.findBankAccountByAccNo(accNo);
-
-                        if(ba is null) 
+                        if (accNo.Length > 37)
                         {
-                            Console.WriteLine("Account Does Not Exist");
+                            Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
+                            break;
                         }
                         else
                         {
-                            Console.WriteLine(ba.ToString());
+
+                            accNo = encryption.Encrypt(accNo);
+
+                            ba = dal.findBankAccountByAccNo(accNo);
+
+                            if (ba is null)
+                            {
+                                Console.WriteLine("Account Does Not Exist");
+                            }
+                            else
+                            {
+                                Console.WriteLine(ba.ToString());
+
+                                Console.WriteLine("Total Memory:" + GC.GetTotalMemory(false)); // checking memory
+                                Console.WriteLine("The generation number of object obj is: " + GC.GetGeneration(ba)); // how much mem account uses
+
+                                Console.WriteLine("Total Memory:" + GC.GetTotalMemory(false)); // check total ram
+
+                            }
+
                         }
+
+
 
                         break;
                     case "4": //Lodge
                         Console.WriteLine("Enter Account Number: ");
                         accNo = Console.ReadLine();
+                        if (accNo.Length > 37)
+                        {
+                            Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
+                            break;
+                        }
+                        accNo = encryption.Encrypt(accNo);
 
                         ba = dal.findBankAccountByAccNo(accNo);
 
@@ -291,6 +330,12 @@ namespace Banking_Application
                     case "5": //Withdraw
                         Console.WriteLine("Enter Account Number: ");
                         accNo = Console.ReadLine();
+                        if (accNo.Length > 37)
+                        {
+                            Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
+                            break;
+                        }
+                        accNo = encryption.Encrypt(accNo);
 
                         ba = dal.findBankAccountByAccNo(accNo);
 
@@ -336,6 +381,23 @@ namespace Banking_Application
                     case "6":
                         running = false;
                         break;
+                    /*case "7":
+                        Console.WriteLine("Enter Account Number: ");
+                        accNo = Console.ReadLine();
+                        string accPlain = accNo;
+                        accNo = encryption.Encrypt(accNo);
+                        ba = dal.findBankAccountByAccNo(accNo);
+
+                        if (ba is null)
+                        {
+                            Console.WriteLine("Account Does Not Exist");
+                        }
+                        else
+                        {
+                            Console.WriteLine(ba.ToString2());
+                        }
+                        break;
+                    */
                     default:    
                         Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
                         break;

@@ -9,6 +9,7 @@ namespace SSD_Assignment___Banking_Application
 {
     public class encryption
     {
+
         // This constant is used to determine the keysize of the encryption algorithm in bits.
         // We divide this by 8 within the code below to get the equivalent number of bytes.
         private const int Keysize = 256;
@@ -16,8 +17,11 @@ namespace SSD_Assignment___Banking_Application
         // This constant determines the number of iterations for the password bytes generation function.
         private const int DerivationIterations = 1000;
 
+
         public static string Encrypt(string clearText)
         {
+            
+
             string EncryptionKey = "abc123";
             byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
             using (Aes encryptor = Aes.Create())

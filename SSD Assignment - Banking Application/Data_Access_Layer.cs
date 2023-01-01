@@ -290,7 +290,7 @@ namespace Banking_Application
                     connection.Open();
                     var command = connection.CreateCommand();
                     command.CommandText = "UPDATE Bank_Accounts SET balance = " + toLodgeTo.balance + " WHERE accountNo = '" + toLodgeTo.accountNo + "'";
-                    command.ExecuteNonQuery();
+                    //command.ExecuteNonQuery();
 
                 
                     SqliteParameter idParam = new SqliteParameter("@newbal", SqliteType.Integer, 0);
@@ -332,7 +332,7 @@ namespace Banking_Application
             else
             {
 
-                using (SqlConnection connection = new SqlConnection(Data_Access_Layer.databaseName))
+                /*using (SqlConnection connection = new SqlConnection(Data_Access_Layer.databaseName))
                 {
                     var newbal = encryption.Decrypt(toWithdrawFrom.balance.ToString());
 
@@ -353,12 +353,32 @@ namespace Banking_Application
                     command.Parameters.Add(descParam);
                     command.Prepare();
                     command.ExecuteNonQuery();
+               */
+
+                using (var connection = getDatabaseConnection())
+                {
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = "UPDATE Bank_Accounts SET balance = " + toWithdrawFrom.balance + " WHERE accountNo = '" + toWithdrawFrom.accountNo + "'";
+                    SqliteParameter idParam = new SqliteParameter("@newbal", SqliteType.Integer, 0);
+                    SqliteParameter descParam =
+                        new SqliteParameter("@desc", SqliteType.Text, 100);
+                    idParam.Value = toWithdrawFrom.balance;
+                    descParam.Value = toWithdrawFrom.accountNo;
+                    command.Parameters.Add(idParam);
+                    command.Parameters.Add(descParam);
+                    command.Prepare();
+
+                    command.ExecuteNonQuery();
+
                 }
 
                 return true;
+
+            }
+
             }
 
         }
 
     }
-}
