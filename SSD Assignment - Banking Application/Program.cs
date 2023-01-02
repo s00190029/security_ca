@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,16 +14,14 @@ namespace Banking_Application
         public static void Main(string[] args)
         {
 
-            EventLog eventLog = new EventLog();
-            eventLog.Source = "MyEventLogTarget";
-            eventLog.WriteEntry("This is a test message.", EventLogEntryType.Information);
+            
+
             Data_Access_Layer dal = Data_Access_Layer.getInstance();
             // dal.loadBankAccounts(); // Do not call this insecure method
             bool running = true;
 
             do
             {
-
                 Console.WriteLine("");
                 Console.WriteLine("***Banking Application Menu***");
                 Console.WriteLine("1. Add Bank Account");
@@ -37,6 +36,13 @@ namespace Banking_Application
                 switch (option)
                 {
                     case "1":
+                        if (VerifyStorage() == false)
+                        {
+                            Console.WriteLine("Not enough storage space to continue operation. Contact administrator");
+                            string logStringAdd = (GetComputerName() + "attempted to create account on low storage. MAC: " + GetMacAddress());
+                            LogEvent("Banking App", logStringAdd);
+                        }
+                       
                         String accountType = "";
                         int loopCount = 0;
 
@@ -199,12 +205,14 @@ namespace Banking_Application
                         String accNo = dal.addBankAccount(ba);
 
                         Console.WriteLine("New Account Number Is: " + encryption.Decrypt(ba.accountNo));
+                        string logString = (GetComputerName() + "created account. MAC: " + GetMacAddress());
+                        LogEvent("Banking App", logString);
 
                         break;
                     case "2":
                         Console.WriteLine("Enter Account Number: ");
                         accNo = Console.ReadLine();
-                        if (accNo.Length > 37)
+                        if (accNo.Length > 37) // can't be longer than maximum account number length
                         {
                             Console.WriteLine("INVALID OPTION CHOSEN - PLEASE TRY AGAIN");
                             break;
@@ -229,10 +237,14 @@ namespace Banking_Application
                                 Console.WriteLine("Proceed With Delection (Y/N)?");
                                 ans = Console.ReadLine();
 
+
+
                                 switch (ans)
                                 {
                                     case "Y":
-                                    case "y": dal.closeBankAccount(accNo);
+                                    case "y": dal.closeBankAccount(accNo); 
+                                        string logStringDel = (GetComputerName() + "attempted deletion of account " + accNo +  "MAC: " + GetMacAddress());
+                                        LogEvent("Banking App", logStringDel);
                                         break;
                                     case "N":
                                     case "n":
@@ -276,8 +288,6 @@ namespace Banking_Application
                             }
 
                         }
-
-
 
                         break;
                     case "4": //Lodge
@@ -369,8 +379,10 @@ namespace Banking_Application
                             } while (amountToWithdraw < 0);
 
                             bool withdrawalOK = dal.withdraw(accNo, amountToWithdraw);
+                            string logStringWithdraw = (GetComputerName() + "withdrew from account " + accNo + "MAC: " + GetMacAddress());
+                            LogEvent("Banking App", logStringWithdraw);
 
-                            if(withdrawalOK == false)
+                            if (withdrawalOK == false)
                             {
 
                                 Console.WriteLine("Insufficient Funds Available.");
@@ -402,10 +414,60 @@ namespace Banking_Application
                         break;
                 }
                 
-                
             } while (running != false);
 
         }
+
+        public static bool VerifyStorage() // use before adding bank account
+        {
+            bool answer = true;
+            if (GetFreeSpace() < 100)
+            {
+                answer = false;
+            }
+            else
+            {
+                answer = true;
+            }
+            return answer;
+        }
+
+        public static long GetFreeSpace()
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string root = Path.GetPathRoot(currentDirectory);
+            DriveInfo drive = new DriveInfo(root);
+            //Console.WriteLine(drive.TotalFreeSpace); // uncomment to see free space
+            return drive.TotalFreeSpace;
+        }
+
+        public static void LogEvent(string sourceIn, string logIn)
+        {
+            EventLog eventLog = new EventLog();
+            eventLog.Source = sourceIn;
+            eventLog.WriteEntry(logIn, EventLogEntryType.Information);
+        }
+
+        public static string GetComputerName()
+        {
+            return System.Environment.MachineName;
+        }
+
+        public static string GetMacAddress()
+        {
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            String sMacAddress = string.Empty;
+            foreach (NetworkInterface adapter in nics)
+            {
+                if (sMacAddress == String.Empty) // scope to 1st card
+                {
+                    IPInterfaceProperties properties = adapter.GetIPProperties();
+                    sMacAddress = adapter.GetPhysicalAddress().ToString();
+                }
+            }
+            return sMacAddress;
+        }
+
 
     }
 }
