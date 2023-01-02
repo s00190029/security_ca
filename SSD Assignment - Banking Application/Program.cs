@@ -13,10 +13,9 @@ namespace Banking_Application
         public static void Main(string[] args)
         {
 
-            /*EventLog eventLog = new EventLog();
+            EventLog eventLog = new EventLog();
             eventLog.Source = "MyEventLogTarget";
             eventLog.WriteEntry("This is a test message.", EventLogEntryType.Information);
-            */
             Data_Access_Layer dal = Data_Access_Layer.getInstance();
             // dal.loadBankAccounts(); // Do not call this insecure method
             bool running = true;
