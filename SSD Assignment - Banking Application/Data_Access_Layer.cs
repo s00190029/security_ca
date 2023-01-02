@@ -15,8 +15,7 @@ namespace Banking_Application
     {
 
         private List<Bank_Account> accounts;
-        public static String databaseName = "Banking Database.db";
-        //private static String databaseName = "Banking Database.db"; // made private as it's not used anywhere else.
+        private static String databaseName = "Banking Database.db";
         private static Data_Access_Layer instance = new Data_Access_Layer();
 
         private Data_Access_Layer()//Singleton Design Pattern (For Concurrency Control) - Use getInstance() Method Instead.
@@ -71,7 +70,7 @@ namespace Banking_Application
             }
         }
 
-        public void loadBankAccounts()
+        private void loadBankAccounts()
         {
             if (!File.Exists(Data_Access_Layer.databaseName))
                 initialiseDatabase();
@@ -177,7 +176,6 @@ namespace Banking_Application
 
         }
 
-
         public Bank_Account findBankAccountByAccNo(String accNo)
         {
             using (var connection = getDatabaseConnection())
@@ -223,7 +221,6 @@ namespace Banking_Application
 
             return null;
         }
-
 
         public bool closeBankAccount(String accNo)
         {

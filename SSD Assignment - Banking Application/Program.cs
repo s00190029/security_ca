@@ -257,7 +257,7 @@ namespace Banking_Application
                         }
 
                         break;
-                    case "3":
+                    case "3": // Read Account
                         Console.WriteLine("Enter Account Number: ");
                         accNo = Console.ReadLine();
                         if (accNo.Length > 37)
@@ -418,7 +418,7 @@ namespace Banking_Application
 
         }
 
-        public static bool VerifyStorage() // use before adding bank account
+        private static bool VerifyStorage() // use before adding bank account
         {
             bool answer = true;
             if (GetFreeSpace() < 100)
@@ -432,7 +432,7 @@ namespace Banking_Application
             return answer;
         }
 
-        public static long GetFreeSpace()
+        private static long GetFreeSpace()
         {
             string currentDirectory = Directory.GetCurrentDirectory();
             string root = Path.GetPathRoot(currentDirectory);
@@ -441,19 +441,19 @@ namespace Banking_Application
             return drive.TotalFreeSpace;
         }
 
-        public static void LogEvent(string sourceIn, string logIn)
+        private static void LogEvent(string sourceIn, string logIn)
         {
             EventLog eventLog = new EventLog();
             eventLog.Source = sourceIn;
             eventLog.WriteEntry(logIn, EventLogEntryType.Information);
         }
 
-        public static string GetComputerName()
+        private static string GetComputerName()
         {
             return System.Environment.MachineName;
         }
 
-        public static string GetMacAddress()
+        private static string GetMacAddress()
         {
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
             String sMacAddress = string.Empty;

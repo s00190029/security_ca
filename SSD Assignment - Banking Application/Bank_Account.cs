@@ -60,7 +60,7 @@ namespace Banking_Application
 
     }
 
-        public String ToString2()
+        /*&private String ToString2()
         {
 
             return "\nAccount No: " + accountNo + "\n" +
@@ -72,6 +72,7 @@ namespace Banking_Application
             "Balance: " + balance + "\n";
 
         }
+        */
 
     }
 }
